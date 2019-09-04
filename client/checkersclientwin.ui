@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>CheckersClientWin</class>
+ <widget class="QMainWindow" name="CheckersClientWin">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>400</width>
+    <height>300</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>CheckersClientWin</string>
+  </property>
+  <widget class="QWidget" name="centralWidget"/>
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>400</width>
+     <height>26</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuStart">
+    <property name="title">
+     <string>Start</string>
+    </property>
+    <addaction name="actionSearch_for_an_opponent"/>
+    <addaction name="separator"/>
+    <addaction name="actionPlay_against_bot"/>
+    <addaction name="separator"/>
+    <addaction name="actionPlay_on_one_computer"/>
+   </widget>
+   <widget class="QMenu" name="menuInfo">
+    <property name="title">
+     <string>Info</string>
+    </property>
+    <addaction name="actionRules"/>
+   </widget>
+   <addaction name="menuStart"/>
+   <addaction name="menuInfo"/>
+  </widget>
+  <action name="actionSearch_for_an_opponent">
+   <property name="text">
+    <string>Search for an opponent</string>
+   </property>
+  </action>
+  <action name="actionPlay_against_bot">
+   <property name="text">
+    <string>Play against bot</string>
+   </property>
+  </action>
+  <action name="actionPlay_on_one_computer">
+   <property name="text">
+    <string>Play on one computer</string>
+   </property>
+  </action>
+  <action name="actionRules">
+   <property name="text">
+    <string>Rules</string>
+   </property>
+  </action>
+  <action name="action">
+   <property name="text">
+    <string>+</string>
+   </property>
+  </action>
+  <action name="action_2">
+   <property name="text">
+    <string>-</string>
+   </property>
+  </action>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <resources/>
+ <connections/>
+</ui>

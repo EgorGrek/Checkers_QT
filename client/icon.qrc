@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/">
+        <file>images/icon_win_client.png</file>
+    </qresource>
+</RCC>
