@@ -117,7 +117,7 @@ void Model::makeMove(QPoint from, QPoint to)
 
 void Model::createStartField()
 {
-    loser = "";
+
     int indexI = 0;
     bool indexJ = false;
     for(QVector<qint8> &i: field)
@@ -884,4 +884,12 @@ bool Model::isGameOver()
 QString Model::getLoser()
 {
     return loser;
+}
+
+void Model::startNewGame()
+{
+    loser = "";
+    whoseMove = WHITEPLAYER;
+    field.fill(QVector<qint8>(8, EMPTYCELL));
+    createStartField();
 }

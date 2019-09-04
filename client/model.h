@@ -23,7 +23,8 @@ class Model: public QObject
 public:
     Model();
     QVector<QVector<qint8>> getField();
-    void createStartField();
+    void startNewGame();
+
     void makeMove(QPoint from, QPoint to);
     qint8 getWhoseMove();
 
@@ -32,6 +33,7 @@ public:
     QVector<QPoint> getAvailableToMoveCells(QPoint from);
     QVector<QPoint> getAvailableToHitCells(QPoint from);
 private:
+    void createStartField();
     void changePlayer();
     bool transformToQueen(QPoint unit);
     void removeKilledChecker();

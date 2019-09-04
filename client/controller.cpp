@@ -9,7 +9,7 @@ Controller::Controller(QWidget *parent) : QWidget (parent)
 
 void Controller::actionPlay_on_one_computer()
 {
-    model->createStartField();
+    model->startNewGame();
     emit fieldChanged();
 }
 
