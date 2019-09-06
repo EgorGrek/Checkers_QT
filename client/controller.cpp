@@ -39,7 +39,6 @@ qint8 Controller::getWhoseMove()
 void Controller::mousePressed(QPoint from)
 {
     mousePressCoordinates = from;
-    qDebug() << "from : " << from;
 }
 
 void Controller::mouseReleased(QPoint to)

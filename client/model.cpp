@@ -210,7 +210,7 @@ QVector<QPoint> Model::getAvailableToHitCells(QPoint from)
                 if(field[from.y() + 1][from.x() + 1] == BLACKUNIT ||
                         field[from.y() + 1][from.x() + 1] == BLACKQUEEN)
                 {
-                    if(field[from.y() + 2][from.x() + 2] == EMPTYCELL)
+                    if(field[from.y () + 2][from.x() + 2] == EMPTYCELL)
                     {
                         availableToHitCells.append(QPoint(from.x() + 2, from.y() + 2));
                     }

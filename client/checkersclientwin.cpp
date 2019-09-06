@@ -23,6 +23,8 @@ CheckersClientWin::CheckersClientWin(QSize winSize, QWidget *parent) :
     connect(ui->actionSearch_for_an_opponent, SIGNAL(triggered()), controller, SLOT(actionSearch_for_an_opponent()));
     connect(controller, SIGNAL(fieldChanged()), this, SLOT(redraw()));
 
+    connect(ui->actionRules, SIGNAL(triggered()), this, SLOT(showRules()));
+
     this->setWindowTitle("Checkers");
     this->setWindowIcon(QIcon(":/images/icon_win_client.png"));
 
@@ -140,7 +142,7 @@ void CheckersClientWin::drawCheckers()
                 // -3 and +3 - due to the error in dividing the field length
                 pChecker->setRect(QRectF(QPointF(indexJ * stepX + 3, indexI * stepY + 3),
                                          QPointF((indexJ + 1) * stepX - 3, (indexI + 1) * stepY - 3)));
-                pChecker->setPen(QPen(Qt::black, 4));
+                pChecker->setPen(QPen(Qt::black, stepX / 20));
                 pChecker->setBrush(QBrush(Qt::white));
 
                 if(whoseMove == WHITEPLAYER)
@@ -155,7 +157,7 @@ void CheckersClientWin::drawCheckers()
 
                 pChecker->setRect(QRectF(QPointF(indexJ * stepX + 3, indexI * stepY + 3),
                                          QPointF((indexJ + 1) * stepX - 3, (indexI + 1) * stepY - 3)));
-                pChecker->setPen(QPen(Qt::white, 4));
+                pChecker->setPen(QPen(Qt::white, stepX / 20));
                 pChecker->setBrush(QBrush(Qt::black));
 
                 if(whoseMove == BLACKPLAYER)
@@ -174,7 +176,7 @@ void CheckersClientWin::drawCheckers()
 
                 pChecker->setRect(QRectF(QPointF(indexJ * stepX + 3, indexI * stepY + 3),
                                          QPointF((indexJ + 1) * stepX - 3, (indexI + 1) * stepY - 3)));
-                pChecker->setPen(QPen(Qt::black, 4));
+                pChecker->setPen(QPen(Qt::black, stepX / 20));
                 pChecker->setBrush(QBrush(Qt::white));
 
                 CheckerQueen *group = new CheckerQueen(this);
@@ -196,11 +198,11 @@ void CheckersClientWin::drawCheckers()
 
                 queenLine->setLine(indexJ * stepX + 3, indexI * stepY + 3,
                                    (indexJ + 1) * stepX - 3, (indexI + 1) * stepY - 3);
-                queenLine->setPen(QPen(Qt::white, 4));
+                queenLine->setPen(QPen(Qt::white, stepX / 20));
 
                 pChecker->setRect(QRectF(QPointF(indexJ * stepX + 3, indexI * stepY + 3),
                                          QPointF((indexJ + 1) * stepX - 3, (indexI + 1) * stepY - 3)));
-                pChecker->setPen(QPen(Qt::white, 4));
+                pChecker->setPen(QPen(Qt::white, stepX / 20));
                 pChecker->setBrush(QBrush(Qt::black));
 
                 CheckerQueen *group = new CheckerQueen(this);
@@ -262,6 +264,11 @@ void CheckersClientWin::showLoser()
     {
         QMessageBox::information(nullptr, "Message", loser + " LOSE!!!");
     }
+}
+
+void CheckersClientWin::showRules()
+{
+    QMessageBox::information(nullptr, "Rules", "Just use google search.");
 }
 
 
