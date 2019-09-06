@@ -262,13 +262,13 @@ void CheckersClientWin::showLoser()
     QString loser = controller->getLoser();
     if(loser != "")
     {
-        QMessageBox::information(nullptr, "Message", loser + " LOSE!!!");
+        QMessageBox::information(this, "Message", loser + " LOSE!!!");
     }
 }
 
 void CheckersClientWin::showRules()
 {
-    QMessageBox::information(nullptr, "Rules", "Just use google search.");
+    QMessageBox::information(this, "Rules", "Just use google search.");
 }
 
 
