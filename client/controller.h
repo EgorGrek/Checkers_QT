@@ -1,10 +1,15 @@
 #ifndef CONTROLLER_H
 #define CONTROLLER_H
+
 #include "model.h"
+#include "registrationwin.h"
+
 #include <QWidget>
+#include <QTcpSocket>
 
+#define PORT_NUM 1237
 
-class Controller: public QWidget
+class Controller: public QObject
 {
     Q_OBJECT
 
@@ -29,6 +34,8 @@ signals:
 
 private:
     Model *model;
+    QTcpSocket* serverSocket;
+    RegistrationWin *registrationWin;
     QPoint mousePressCoordinates;
 };
 

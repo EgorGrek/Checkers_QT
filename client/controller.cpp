@@ -2,9 +2,12 @@
 
 #include <QtWidgets>
 
-Controller::Controller(QWidget *parent) : QWidget (parent)
+Controller::Controller(QWidget *parent) : QObject (parent)
 {
+    userAuthorized = false;
     model = new Model;
+    serverSocket = nullptr;
+    registrationWin = nullptr;
 }
 
 void Controller::actionPlay_on_one_computer()
@@ -15,7 +18,19 @@ void Controller::actionPlay_on_one_computer()
 
 void Controller::actionSearch_for_an_opponent()
 {
-   QMessageBox::information(nullptr, "Message", "This function is not available yet, sorry :(");
+    serverSocket = new QTcpSocket(this);
+    serverSocket->connectToHost("localhost", PORT_NUM);
+    if(serverSocket->waitForConnected())
+    {
+        RegistrationWin *registrationWin = new RegistrationWin();
+        registrationWin->setModal(true);
+        registrationWin->show();
+        registrationWin->reject();
+    }
+    else
+    {
+        QMessageBox::information(nullptr, "Message", "Cannot connect to server,\n try again later :(");
+    }
 }
 void Controller::actionPlay_against_bot()
 {
@@ -50,7 +65,13 @@ void Controller::mouseReleased(QPoint to)
 
 Controller::~Controller()
 {
+    if(serverSocket->isOpen())
+    {
+        serverSocket->close();
+    }
     delete model;
+    delete serverSocket;
+    delete registrationWin;
 }
 
 
