@@ -2,12 +2,12 @@
 #define CONTROLLER_H
 
 #include "model.h"
-#include "registrationwin.h"
+#include "serverhandler.h"
 
 #include <QWidget>
 #include <QTcpSocket>
 
-#define PORT_NUM 1237
+
 
 class Controller: public QObject
 {
@@ -24,6 +24,10 @@ public:
     QVector<QVector<qint8>> getField();
     QString getLoser();
 
+    bool connectToServer();
+    void logIn(QString userName, QString userPassword);
+    void createAccount(QString userName, QString userPassword);
+
 private slots:
     void actionSearch_for_an_opponent();
     void actionPlay_against_bot();
@@ -31,12 +35,13 @@ private slots:
 
 signals:
     void fieldChanged();
+    void serverUnavailable();
 
 private:
     Model *model;
-    QTcpSocket* serverSocket;
-    RegistrationWin *registrationWin;
+    ServerHandler *serverhandler;
     QPoint mousePressCoordinates;
+
 };
 
 #endif // CONTROLLER_H

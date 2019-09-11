@@ -1,18 +1,23 @@
 #include "registrationwin.h"
 
-RegistrationWin::RegistrationWin(QDialog *parent) : QDialog(parent)
+RegistrationWin::RegistrationWin(Controller *controller, QDialog *parent) : QDialog(parent)
 {
+    this->controller = controller;
+
+
     setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
 
     QLabel* pblName =  new QLabel ("Login: ");
     QLabel* pblPassword =  new QLabel ("Password: ");
 
-    QLineEdit* ptxtName = new QLineEdit;
-    QLineEdit* ptxtPassword = new QLineEdit;
+    ptxtName = new QLineEdit;
+    ptxtPassword = new QLineEdit;
 
     QPushButton* pcmdLogin = new QPushButton("Login");
     QPushButton* pcmdCreateAccount = new QPushButton ("Create account");
 
+    connect(pcmdLogin, SIGNAL(clicked()),this, SLOT(login()) );
+    connect(pcmdCreateAccount, SIGNAL(clicked()),this, SLOT(createAccount()) );
     QHBoxLayout* buttonLayout = new QHBoxLayout;
 
     buttonLayout->addWidget(pcmdLogin);
@@ -32,4 +37,14 @@ RegistrationWin::RegistrationWin(QDialog *parent) : QDialog(parent)
 
 
     this->setLayout(pvbxLayout);
+}
+
+
+void RegistrationWin::login()
+{
+    controller->logIn(ptxtName->text(), ptxtPassword->text());
+}
+void RegistrationWin::createAccount()
+{
+    controller->createAccount(ptxtName->text(), ptxtPassword->text());
 }

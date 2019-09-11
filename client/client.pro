@@ -32,6 +32,7 @@ SOURCES += \
         checkersclientwin.cpp \
         model.cpp \
         registrationwin.cpp \
+        serverhandler.cpp \
         viewcheckers.cpp
 
 HEADERS += \
@@ -41,6 +42,7 @@ HEADERS += \
         controller.h \
         model.h \
         registrationwin.h \
+        serverhandler.h \
         viewcheckers.h
 
 FORMS += \

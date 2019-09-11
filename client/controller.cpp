@@ -4,10 +4,9 @@
 
 Controller::Controller(QWidget *parent) : QObject (parent)
 {
-    userAuthorized = false;
     model = new Model;
-    serverSocket = nullptr;
-    registrationWin = nullptr;
+    serverhandler = new ServerHandler();
+    connect(serverhandler, SIGNAL(serverUnavailable()), SIGNAL(serverUnavailable()));
 }
 
 void Controller::actionPlay_on_one_computer()
@@ -18,19 +17,7 @@ void Controller::actionPlay_on_one_computer()
 
 void Controller::actionSearch_for_an_opponent()
 {
-    serverSocket = new QTcpSocket(this);
-    serverSocket->connectToHost("localhost", PORT_NUM);
-    if(serverSocket->waitForConnected())
-    {
-        RegistrationWin *registrationWin = new RegistrationWin();
-        registrationWin->setModal(true);
-        registrationWin->show();
-        registrationWin->reject();
-    }
-    else
-    {
-        QMessageBox::information(nullptr, "Message", "Cannot connect to server,\n try again later :(");
-    }
+    //serverhandler->searchForAnOpponent();
 }
 void Controller::actionPlay_against_bot()
 {
@@ -63,15 +50,25 @@ void Controller::mouseReleased(QPoint to)
     return;
 }
 
-Controller::~Controller()
+bool Controller::connectToServer()
 {
-    if(serverSocket->isOpen())
-    {
-        serverSocket->close();
-    }
-    delete model;
-    delete serverSocket;
-    delete registrationWin;
+    return serverhandler->connectToServer();
 }
 
+Controller::~Controller()
+{
+    delete model;
+
+    delete serverhandler;
+}
+
+void Controller::logIn(QString userName, QString userPassword)
+{
+    serverhandler->logIn(userName, userPassword);
+}
+
+void Controller::createAccount(QString userName, QString userPassword)
+{
+    serverhandler->createAccount(userName, userPassword);
+}
 

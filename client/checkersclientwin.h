@@ -34,7 +34,8 @@ private:
 private slots:
     void redraw();
     void showRules();
-
+    void serverUnavailable();
+    void actionSearch_for_an_opponent();
 
 
 private:

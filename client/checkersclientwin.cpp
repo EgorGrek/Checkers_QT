@@ -3,6 +3,7 @@
 #include "viewcheckers.h"
 #include "checker.h"
 #include "checkerqueen.h"
+#include "registrationwin.h"
 
 #include <QPainter>
 #include <QApplication>
@@ -17,13 +18,16 @@ CheckersClientWin::CheckersClientWin(QSize winSize, QWidget *parent) :
 {
     ui->setupUi(this);
 
+    connect(ui->actionRules, SIGNAL(triggered()), this, SLOT(showRules()));
+    connect(ui->actionSearch_for_an_opponent, SIGNAL(triggered()), this, SLOT(actionSearch_for_an_opponent()));
+
     controller = new Controller();
     connect(ui->actionPlay_on_one_computer, SIGNAL(triggered()), controller, SLOT(actionPlay_on_one_computer()));
     connect(ui->actionPlay_against_bot, SIGNAL(triggered()), controller, SLOT(actionPlay_against_bot()));
-    connect(ui->actionSearch_for_an_opponent, SIGNAL(triggered()), controller, SLOT(actionSearch_for_an_opponent()));
-    connect(controller, SIGNAL(fieldChanged()), this, SLOT(redraw()));
 
-    connect(ui->actionRules, SIGNAL(triggered()), this, SLOT(showRules()));
+
+    connect(controller, SIGNAL(fieldChanged()), this, SLOT(redraw()));
+    connect(controller, SIGNAL(serverUnavailable()), this, SLOT(serverUnavailable()));
 
     this->setWindowTitle("Checkers");
     this->setWindowIcon(QIcon(":/images/icon_win_client.png"));
@@ -113,8 +117,6 @@ void CheckersClientWin::drawField()
      delete xp2;
      delete yp2;
 }
-
-
 
 void CheckersClientWin::drawCheckers()
 {
@@ -271,4 +273,22 @@ void CheckersClientWin::showRules()
     QMessageBox::information(this, "Rules", "Just use google search.");
 }
 
+void CheckersClientWin::serverUnavailable()
+{
+    QMessageBox::information(nullptr, "Message", "Cannot connect to server,\n try again later :(");
+}
+
+void CheckersClientWin::actionSearch_for_an_opponent()
+{
+    if(controller->connectToServer())
+    {
+        RegistrationWin *registrationWin = new RegistrationWin(controller);
+        registrationWin->setModal(true);
+        registrationWin->show();
+    }
+    else
+    {
+        return;
+    }
+}
 
