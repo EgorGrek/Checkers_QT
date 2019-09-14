@@ -7,17 +7,17 @@ RegistrationWin::RegistrationWin(Controller *controller, QDialog *parent) : QDia
 
     setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
 
-    QLabel* pblName =  new QLabel ("Login: ");
+    QLabel* pblLogin =  new QLabel ("Login: ");
     QLabel* pblPassword =  new QLabel ("Password: ");
 
-    ptxtName = new QLineEdit;
+    ptxtLogin = new QLineEdit;
     ptxtPassword = new QLineEdit;
 
     QPushButton* pcmdLogin = new QPushButton("Login");
     QPushButton* pcmdCreateAccount = new QPushButton ("Create account");
 
-    connect(pcmdLogin, SIGNAL(clicked()),this, SLOT(login()) );
-    connect(pcmdCreateAccount, SIGNAL(clicked()),this, SLOT(createAccount()) );
+    connect(pcmdLogin, SIGNAL(clicked()),this, SLOT(clickedLoginButton()) );
+    connect(pcmdCreateAccount, SIGNAL(clicked()),this, SLOT(clickedCreateAccountButton()) );
     QHBoxLayout* buttonLayout = new QHBoxLayout;
 
     buttonLayout->addWidget(pcmdLogin);
@@ -25,8 +25,8 @@ RegistrationWin::RegistrationWin(Controller *controller, QDialog *parent) : QDia
     buttonLayout->addWidget(pcmdCreateAccount);
 
     QVBoxLayout* pvbxLayout = new QVBoxLayout;
-    pvbxLayout->addWidget(pblName);
-    pvbxLayout->addWidget(ptxtName);
+    pvbxLayout->addWidget(pblLogin);
+    pvbxLayout->addWidget(ptxtLogin);
 
     pvbxLayout->addWidget(pblPassword);
     pvbxLayout->addWidget(ptxtPassword);
@@ -40,11 +40,32 @@ RegistrationWin::RegistrationWin(Controller *controller, QDialog *parent) : QDia
 }
 
 
-void RegistrationWin::login()
+void RegistrationWin::clickedLoginButton()
 {
-    controller->logIn(ptxtName->text(), ptxtPassword->text());
+    controller->logIn(ptxtLogin->text(), ptxtPassword->text());
 }
-void RegistrationWin::createAccount()
+void RegistrationWin::clickedCreateAccountButton()
 {
-    controller->createAccount(ptxtName->text(), ptxtPassword->text());
+    if(ptxtLogin->text().size() < 10 || ptxtPassword->text().size() < 10)
+    {
+        QMessageBox::information(this, "Message", "Password and login must be longer than 10 characters.");
+        return;
+    }
+    controller->createAccount(ptxtLogin->text(), ptxtPassword->text());
+}
+
+void RegistrationWin::cameServerMessage(const qint32& messageType)
+{
+    if(messageType == OK_LOGIN || messageType == OK_CREATE)
+    {
+        this->close();
+    }
+    else if(messageType == NOT_LOGIN)
+    {
+        QMessageBox::information(this, "Message", "Wrong password");
+    }
+    else if(messageType == NOT_CREATE)
+    {
+        QMessageBox::information(this, "Message", "This login is already taken.\n");
+    }
 }

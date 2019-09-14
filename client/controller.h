@@ -24,7 +24,7 @@ public:
     QVector<QVector<qint8>> getField();
     QString getLoser();
 
-    bool connectToServer();
+    void connectToServer();
     void logIn(QString userName, QString userPassword);
     void createAccount(QString userName, QString userPassword);
 
@@ -32,10 +32,11 @@ private slots:
     void actionSearch_for_an_opponent();
     void actionPlay_against_bot();
     void actionPlay_on_one_computer();
+    void processingMessage(const QString&);
 
 signals:
     void fieldChanged();
-    void serverUnavailable();
+    void serverError(const QString&);
 
 private:
     Model *model;

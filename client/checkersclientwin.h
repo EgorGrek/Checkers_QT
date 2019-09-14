@@ -34,7 +34,7 @@ private:
 private slots:
     void redraw();
     void showRules();
-    void serverUnavailable();
+    void serverError(const QString &err);
     void actionSearch_for_an_opponent();
 
 

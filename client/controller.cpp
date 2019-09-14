@@ -1,12 +1,13 @@
 #include "controller.h"
-
+#include "parser.h"
 #include <QtWidgets>
 
 Controller::Controller(QWidget *parent) : QObject (parent)
 {
     model = new Model;
     serverhandler = new ServerHandler();
-    connect(serverhandler, SIGNAL(serverUnavailable()), SIGNAL(serverUnavailable()));
+    connect(serverhandler, SIGNAL(serverError(const QString&)), SIGNAL(serverError(const QString&)));
+    connect(serverhandler, SIGNAL(messageCame(const QString&)), SLOT(processingMessage(const QString&)));
 }
 
 void Controller::actionPlay_on_one_computer()
@@ -50,9 +51,9 @@ void Controller::mouseReleased(QPoint to)
     return;
 }
 
-bool Controller::connectToServer()
+void Controller::connectToServer()
 {
-    return serverhandler->connectToServer();
+   serverhandler->connectToServer();
 }
 
 Controller::~Controller()
@@ -70,5 +71,36 @@ void Controller::logIn(QString userName, QString userPassword)
 void Controller::createAccount(QString userName, QString userPassword)
 {
     serverhandler->createAccount(userName, userPassword);
+}
+
+void Controller::processingMessage(const QString& message)
+{
+    qint32 messageType = Parser::getMessageType(message);
+    if(messageType == UNKNOWN_MESSAGE_TYPE)
+    {
+        emit serverError("Error: Server don't understand request from client :(");
+    }
+    else if(messageType == ENEMY_STEP)
+    {
+        QPair<QPoint, QPoint> from_to_move = Parser::parsStep(message);
+        model->makeMove(from_to_move.first, from_to_move.second);
+        emit fieldChanged();
+    }
+    else if(messageType == OK_LOGIN)
+    {
+
+    }
+    else if(messageType == OK_CREATE)
+    {
+
+    }
+    else if(messageType == NOT_LOGIN)
+    {
+
+    }
+    else if(messageType == NOT_CREATE)
+    {
+
+    }
 }
 

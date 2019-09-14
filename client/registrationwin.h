@@ -1,6 +1,8 @@
 #ifndef REGISTRATIONWIN_H
 #define REGISTRATIONWIN_H
+
 #include "controller.h"
+#include "parser.h"
 
 #include <QDialog>
 #include <QtWidgets>
@@ -12,14 +14,17 @@ public:
     explicit RegistrationWin(Controller *controller, QDialog *parent = nullptr);
 
 public slots:
-    void login();
-    void createAccount();
+    void clickedLoginButton();
+    void clickedCreateAccountButton();
+    void cameServerMessage(const qint32&);
+
+
+
 private:
     Controller *controller;
-
-public:
-    QLineEdit* ptxtName;
+    QLineEdit* ptxtLogin;
     QLineEdit* ptxtPassword;
+
 };
 
 #endif // REGISTRATIONWIN_H

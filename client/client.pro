@@ -41,6 +41,7 @@ HEADERS += \
         checkersclientwin.h \
         controller.h \
         model.h \
+        parser.h \
         registrationwin.h \
         serverhandler.h \
         viewcheckers.h

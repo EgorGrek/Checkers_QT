@@ -40,7 +40,8 @@ HEADERS += \
         clienthandler.h \
         controller.h \
         dbconnectionprovider.h \
-        model.h
+        model.h \
+        parser.h
 
 FORMS += \
         checkersserverwin.ui

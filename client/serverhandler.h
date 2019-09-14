@@ -13,7 +13,7 @@ class ServerHandler : public QObject
 public:
     ServerHandler();
     ~ServerHandler();
-    bool connectToServer();
+    void connectToServer();
     bool isUserAuthorized();
     void searchForAnOpponent();
     void makeMove(QPoint from, QPoint to);
@@ -25,10 +25,15 @@ private:
     void sendToServer(const QString &data);
 
 signals:
-    void disconnectedFromServer();
-    void serverUnavailable();
-    void notLogin(const QString& reason);
-    void login();
+    void serverError(const QString&);
+    void messageCame(const QString&);
+
+private slots:
+
+    void slotReadyRead();
+    void slotError(QAbstractSocket::SocketError);
+    void slotConnected();
+
 
 private:
     bool userAuthorized;

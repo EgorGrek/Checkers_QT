@@ -27,7 +27,8 @@ CheckersClientWin::CheckersClientWin(QSize winSize, QWidget *parent) :
 
 
     connect(controller, SIGNAL(fieldChanged()), this, SLOT(redraw()));
-    connect(controller, SIGNAL(serverUnavailable()), this, SLOT(serverUnavailable()));
+
+    connect(controller, SIGNAL(serverError(const QString&)), this, SLOT(serverError(const QString&)));
 
     this->setWindowTitle("Checkers");
     this->setWindowIcon(QIcon(":/images/icon_win_client.png"));
@@ -270,25 +271,28 @@ void CheckersClientWin::showLoser()
 
 void CheckersClientWin::showRules()
 {
-    QMessageBox::information(this, "Rules", "Just use google search.");
+    QMessageBox msgBox(this);
+    msgBox.setText("Just use google search.");
+    msgBox.setWindowTitle("Rules");
+    msgBox.setStandardButtons(QMessageBox::Ok);
+    msgBox.exec();
+   // msgBox.close();
+   //QMessageBox::StandardButton a = QMessageBox::information(this, "Rules", "Just use google search.");
+
 }
 
-void CheckersClientWin::serverUnavailable()
+void CheckersClientWin::serverError(const QString &err)
 {
-    QMessageBox::information(nullptr, "Message", "Cannot connect to server,\n try again later :(");
+    QMessageBox::information(nullptr, "Error", err);
 }
 
 void CheckersClientWin::actionSearch_for_an_opponent()
 {
-    if(controller->connectToServer())
-    {
-        RegistrationWin *registrationWin = new RegistrationWin(controller);
-        registrationWin->setModal(true);
-        registrationWin->show();
-    }
-    else
-    {
-        return;
-    }
+    controller->connectToServer();
+
+    RegistrationWin *registrationWin = new RegistrationWin(controller);
+    registrationWin->setModal(true);
+    registrationWin->show();
+
 }
 
