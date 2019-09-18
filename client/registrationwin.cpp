@@ -46,9 +46,15 @@ void RegistrationWin::clickedLoginButton()
 }
 void RegistrationWin::clickedCreateAccountButton()
 {
-    if(ptxtLogin->text().size() < 10 || ptxtPassword->text().size() < 10)
+    if(ptxtLogin->text().contains(':'))
     {
-        QMessageBox::information(this, "Message", "Password and login must be longer than 10 characters.");
+        QMessageBox::information(this, "Message", "Sorry, but the login must not contain a symbol ':'");
+        return;
+    }
+
+    if(ptxtLogin->text().size() < 6 || ptxtPassword->text().size() < 6)
+    {
+        QMessageBox::information(this, "Message", "Password and login must be longer than 6 characters.");
         return;
     }
     controller->createAccount(ptxtLogin->text(), ptxtPassword->text());
@@ -58,11 +64,12 @@ void RegistrationWin::cameServerMessage(const qint32& messageType)
 {
     if(messageType == OK_LOGIN || messageType == OK_CREATE)
     {
-        this->close();
+       // this->close();
+        this->reject();
     }
     else if(messageType == NOT_LOGIN)
     {
-        QMessageBox::information(this, "Message", "Wrong password");
+        QMessageBox::information(this, "Message", "Wrong password or login");
     }
     else if(messageType == NOT_CREATE)
     {

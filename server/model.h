@@ -27,7 +27,7 @@ public:
     QVector<QVector<qint8>> getField();
     void startNewGame();
 
-    void makeMove(QPoint from, QPoint to);
+    bool makeMove(QPoint from, QPoint to);
     qint8 getWhoseMove();
 
     QString getLoser();

@@ -18,7 +18,7 @@ void Controller::actionPlay_on_one_computer()
 
 void Controller::actionSearch_for_an_opponent()
 {
-    //serverhandler->searchForAnOpponent();
+    serverhandler->searchForAnOpponent();
 }
 void Controller::actionPlay_against_bot()
 {
@@ -34,6 +34,7 @@ QString Controller::getLoser()
 {
     return model->getLoser();
 }
+
 qint8 Controller::getWhoseMove()
 {
     return model->getWhoseMove();
@@ -76,9 +77,10 @@ void Controller::createAccount(QString userName, QString userPassword)
 void Controller::processingMessage(const QString& message)
 {
     qint32 messageType = Parser::getMessageType(message);
+    qDebug() << message;
     if(messageType == UNKNOWN_MESSAGE_TYPE)
     {
-        emit serverError("Error: Server don't understand request from client :(");
+        emit serverError("Error: We don't understand request from server :(,\n maybe you should update application3");
     }
     else if(messageType == ENEMY_STEP)
     {
@@ -86,21 +88,9 @@ void Controller::processingMessage(const QString& message)
         model->makeMove(from_to_move.first, from_to_move.second);
         emit fieldChanged();
     }
-    else if(messageType == OK_LOGIN)
+    else
     {
-
-    }
-    else if(messageType == OK_CREATE)
-    {
-
-    }
-    else if(messageType == NOT_LOGIN)
-    {
-
-    }
-    else if(messageType == NOT_CREATE)
-    {
-
+        emit cameServerMessage(messageType);
     }
 }
 

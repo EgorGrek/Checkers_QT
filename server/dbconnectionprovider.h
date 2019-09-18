@@ -22,15 +22,13 @@ public:
     void insertUser(const QString &name, const QString &password);
     bool isUserExist(const QString &name);
     bool isCorrectPassword(const QString &name, const QString &password);
-
+    ~DBConnectionProvider();
 private:
     DBConnectionProvider();
 
 private:
-
     QMutex mutex;
     QSqlDatabase db;
-
 };
 
 #endif // DBCONNECTIONPROVIDER_H

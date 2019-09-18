@@ -36,6 +36,7 @@ private slots:
 
 signals:
     void fieldChanged();
+    void cameServerMessage(const qint32&);
     void serverError(const QString&);
 
 private:

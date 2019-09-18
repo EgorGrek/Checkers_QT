@@ -19,16 +19,17 @@ CheckersClientWin::CheckersClientWin(QSize winSize, QWidget *parent) :
     ui->setupUi(this);
 
     connect(ui->actionRules, SIGNAL(triggered()), this, SLOT(showRules()));
-    connect(ui->actionSearch_for_an_opponent, SIGNAL(triggered()), this, SLOT(actionSearch_for_an_opponent()));
+
 
     controller = new Controller();
     connect(ui->actionPlay_on_one_computer, SIGNAL(triggered()), controller, SLOT(actionPlay_on_one_computer()));
     connect(ui->actionPlay_against_bot, SIGNAL(triggered()), controller, SLOT(actionPlay_against_bot()));
+    connect(ui->actionSearch_for_an_opponent, SIGNAL(triggered()), controller, SLOT(actionSearch_for_an_opponent()));
 
 
     connect(controller, SIGNAL(fieldChanged()), this, SLOT(redraw()));
-
     connect(controller, SIGNAL(serverError(const QString&)), this, SLOT(serverError(const QString&)));
+    connect(controller, SIGNAL(cameServerMessage(const qint32&)), this, SLOT(cameServerMessage(const qint32&)));
 
     this->setWindowTitle("Checkers");
     this->setWindowIcon(QIcon(":/images/icon_win_client.png"));
@@ -240,6 +241,7 @@ void CheckersClientWin::mausePressed(QPointF mouseCoordinates)
 {
     controller->mousePressed(getFieldPosition(mouseCoordinates));
 }
+
 void CheckersClientWin::mauseReleased(QPointF mouseCoordinates)
 {
     controller->mouseReleased(getFieldPosition(mouseCoordinates));
@@ -271,28 +273,34 @@ void CheckersClientWin::showLoser()
 
 void CheckersClientWin::showRules()
 {
-    QMessageBox msgBox(this);
-    msgBox.setText("Just use google search.");
-    msgBox.setWindowTitle("Rules");
-    msgBox.setStandardButtons(QMessageBox::Ok);
-    msgBox.exec();
-   // msgBox.close();
-   //QMessageBox::StandardButton a = QMessageBox::information(this, "Rules", "Just use google search.");
+    QMessageBox::information(this, "Rules", "Just use google search.");
 
 }
 
 void CheckersClientWin::serverError(const QString &err)
 {
-    QMessageBox::information(nullptr, "Error", err);
+    QMessageBox::information(this, "Error", err);
 }
 
-void CheckersClientWin::actionSearch_for_an_opponent()
+void CheckersClientWin::cameServerMessage(const qint32& message)
 {
-    controller->connectToServer();
+    if(message == SHOW_REGISTRATION_WIN)
+    {
+        RegistrationWin *registrationWin = new RegistrationWin(controller);
 
-    RegistrationWin *registrationWin = new RegistrationWin(controller);
-    registrationWin->setModal(true);
-    registrationWin->show();
+        connect(controller, SIGNAL(cameServerMessage(const qint32&)), registrationWin, SLOT(cameServerMessage(const qint32&)));
+
+        registrationWin->setModal(true);
+        registrationWin->show();
+    }
+    else if(message == START_WHITE)
+    {
+        QMessageBox::information(this, "Message", "We found opponent for you, you are playing white.");
+    }
+    else if(message == START_BLACK)
+    {
+        QMessageBox::information(this, "Message", "We found opponent for you, you are playing black.");
+    }
 
 }
 

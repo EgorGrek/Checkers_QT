@@ -4,7 +4,7 @@
 #include <QWidget>
 
 #define UNKNOWN_MESSAGE_TYPE   -1
-#define ENEMY_STEP                    0
+#define ENEMY_STEP              0
 #define START_WHITE             1
 #define START_BLACK             2
 #define NOT_STEP                3
@@ -13,6 +13,9 @@
 #define OK_STEP                 6
 #define OK_LOGIN                7
 #define OK_CREATE               8
+#define SHOW_REGISTRATION_WIN   9
+#define CONNECTING              10
+#define CONNECTED               11
 
 class Parser
 {
@@ -22,6 +25,7 @@ public:
 
     static qint32 getMessageType(const QString &str)
     {
+
         if(str.startsWith("step"))
         {
             return ENEMY_STEP;
@@ -57,6 +61,18 @@ public:
         else if(str.startsWith("okstep"))
         {
             return OK_STEP;
+        }
+        else if(str.startsWith("connecting"))
+        {
+            return CONNECTING;
+        }
+        else if(str.startsWith("connected"))
+        {
+            return CONNECTED;
+        }
+        else if(str.startsWith("showRegistrationWin"))
+        {
+            return SHOW_REGISTRATION_WIN;
         }
         return UNKNOWN_MESSAGE_TYPE;
     }

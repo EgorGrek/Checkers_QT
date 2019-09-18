@@ -1,6 +1,8 @@
 #ifndef SERVERHANDLER_H
 #define SERVERHANDLER_H
 
+#include "parser.h"
+
 #include <QObject>
 #include <QWidget>
 #include <QTcpSocket>
@@ -23,6 +25,7 @@ public:
 
 private:
     void sendToServer(const QString &data);
+    void processMessage(const QString &message);
 
 signals:
     void serverError(const QString&);
@@ -37,8 +40,6 @@ private slots:
 
 private:
     bool userAuthorized;
-    QString userName;
-    QString userPassword;
 
     QTcpSocket* serverSocket;
 };

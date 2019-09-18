@@ -4,6 +4,7 @@
 #include "model.h"
 #include "controller.h"
 #include "viewcheckers.h"
+#include "parser.h"
 
 #include <QMainWindow>
 #include <QtWidgets>
@@ -35,13 +36,14 @@ private slots:
     void redraw();
     void showRules();
     void serverError(const QString &err);
-    void actionSearch_for_an_opponent();
+    void cameServerMessage(const qint32&);
 
 
 private:
     Ui::CheckersClientWin *ui;
     Controller *controller;
     ViewCheckers *pView;
+
 
 
 };

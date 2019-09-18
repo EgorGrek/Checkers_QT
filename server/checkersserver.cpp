@@ -18,6 +18,10 @@ void CheckersServer::startServer()
     {
         qDebug() << "Listening to port " << port << "...";
     }
+
+    DBConnectionProvider *dbConnectionProvider = DBConnectionProvider::getDBConnectionProviderInstance();
+    dbConnectionProvider->createConnection();
+    dbConnectionProvider->createDB();
 }
 
 void CheckersServer::incomingConnection(qintptr socketDescriptor)

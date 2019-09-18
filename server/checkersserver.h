@@ -3,6 +3,7 @@
 
 
 #include "clienthandler.h"
+#include "dbconnectionprovider.h"
 
 #include <QTcpServer>
 
