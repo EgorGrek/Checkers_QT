@@ -27,7 +27,6 @@ public:
     void mauseReleased(QPointF mouseCoordinates);
     void showLoser();
 
-
 private:
     QPoint getFieldPosition(QPointF mouseCoordinates);
     virtual void resizeEvent(QResizeEvent *event) override;

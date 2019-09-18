@@ -9,8 +9,11 @@ class ViewCheckers: public QGraphicsView
 public:
     ViewCheckers(QGraphicsScene* pScene, QWidget* pwgt = nullptr);
 
+protected:
+    void wheelEvent(QWheelEvent * event);
+
 public slots:
-    void slotZoomin();
+    void slotZoomIn();
     void slotZoomOut();
 };
 

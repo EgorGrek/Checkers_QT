@@ -20,7 +20,6 @@ CheckersClientWin::CheckersClientWin(QSize winSize, QWidget *parent) :
 
     connect(ui->actionRules, SIGNAL(triggered()), this, SLOT(showRules()));
 
-
     controller = new Controller();
     connect(ui->actionPlay_on_one_computer, SIGNAL(triggered()), controller, SLOT(actionPlay_on_one_computer()));
     connect(ui->actionPlay_against_bot, SIGNAL(triggered()), controller, SLOT(actionPlay_against_bot()));
@@ -43,20 +42,24 @@ CheckersClientWin::CheckersClientWin(QSize winSize, QWidget *parent) :
 
     pView = new ViewCheckers(new QGraphicsScene());
 
-
+    QHBoxLayout* phbxLayout = new QHBoxLayout;
     QVBoxLayout* pvbxLayout = new QVBoxLayout;
-    QPushButton* pcmdZoomin = new QPushButton("Zoom In");
+    QPushButton* pcmdZoomIn = new QPushButton("Zoom In");
     QPushButton* pcmdZoomOut = new QPushButton("Zoom Out");
 
+    phbxLayout->addWidget(new QPushButton("Log in"));
+    phbxLayout->addStretch(0);
+
+    pvbxLayout->addLayout(phbxLayout);
     pvbxLayout->addWidget(pView);
-    pvbxLayout->addWidget(pcmdZoomin);
+    pvbxLayout->addWidget(pcmdZoomIn);
     pvbxLayout->addWidget(pcmdZoomOut);
 
     pCentralWidget->setLayout(pvbxLayout);
 
     this->setCentralWidget(pCentralWidget);
 
-    connect(pcmdZoomin, SIGNAL(clicked()), pView, SLOT(slotZoomin()));
+    connect(pcmdZoomIn, SIGNAL(clicked()), pView, SLOT(slotZoomIn()));
     connect(pcmdZoomOut, SIGNAL(clicked()), pView, SLOT(slotZoomOut()));
 
     qint32 minSideWin = qMin(winSize.width(), winSize.height());      // square win
