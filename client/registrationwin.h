@@ -19,7 +19,6 @@ public slots:
     void cameServerMessage(const qint32&);
 
 
-
 private:
     Controller *controller;
     QLineEdit* ptxtLogin;

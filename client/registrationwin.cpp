@@ -44,6 +44,7 @@ void RegistrationWin::clickedLoginButton()
 {
     controller->logIn(ptxtLogin->text(), ptxtPassword->text());
 }
+
 void RegistrationWin::clickedCreateAccountButton()
 {
     if(ptxtLogin->text().contains(':'))

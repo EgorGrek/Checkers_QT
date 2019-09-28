@@ -16,6 +16,8 @@
 #define SHOW_REGISTRATION_WIN   9
 #define CONNECTING              10
 #define CONNECTED               11
+#define NOT_START               12
+#define OPPONENT_FOUND          13
 
 class Parser
 {
@@ -37,6 +39,10 @@ public:
         else if(str.startsWith("startblack"))
         {
             return START_BLACK;
+        }
+        else if(str.startsWith("notstart"))
+        {
+            return NOT_START;
         }
         else if(str.startsWith("notstep"))
         {
@@ -74,6 +80,10 @@ public:
         {
             return SHOW_REGISTRATION_WIN;
         }
+        else if(str.startsWith("areyouready"))
+        {
+            return OPPONENT_FOUND;
+        }
         return UNKNOWN_MESSAGE_TYPE;
     }
     static QPair<QPoint, QPoint> parsStep(const QString &str)
@@ -83,6 +93,13 @@ public:
             return QPair<QPoint, QPoint>(QPoint(), QPoint());
         return QPair<QPoint, QPoint>(QPoint(rx.cap(1).toInt(), rx.cap(2).toInt()),
                                      QPoint(rx.cap(3).toInt(), rx.cap(4).toInt()));
+    }
+    static QString parseOpponent(const QString &str)
+    {
+        QRegExp rx( "areyouready:(\\w+|\\d+)");
+        if( rx.indexIn(str) == -1 )
+            return QString("");
+        return rx.cap(1);
     }
 };
 

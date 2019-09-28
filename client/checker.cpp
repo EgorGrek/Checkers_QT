@@ -8,11 +8,18 @@ Checker::Checker(CheckersClientWin *pCheckersClientWin, QGraphicsEllipseItem *pa
 Checker::~Checker()
 {}
 
-void    Checker::mousePressEvent ( QGraphicsSceneMouseEvent * event )
+void Checker::mousePressEvent ( QGraphicsSceneMouseEvent * event )
 {
     //this->setOpacity(10);
     this->setZValue(1);
-    this->pCheckersClientWin->mausePressed(event->scenePos());
+    if(this->pCheckersClientWin->mausePressed(event->scenePos()))
+    {
+        this->setFlags(QGraphicsItem::ItemIsMovable);
+    }
+    else
+    {
+        this->setFlags(this->flags() & ~QGraphicsItem::ItemIsMovable);
+    }
 }
 
 void    Checker::mouseReleaseEvent ( QGraphicsSceneMouseEvent * event )

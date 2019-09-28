@@ -4,6 +4,7 @@
 ServerHandler::ServerHandler()
 {
     userAuthorized = false;
+    haveConnectionToServer = false;
     serverSocket = new QTcpSocket(this);
     connect(serverSocket, SIGNAL(connected()), SLOT(slotConnected()));
     connect(serverSocket, SIGNAL(readyRead() ), SLOT(slotReadyRead()));
@@ -12,19 +13,27 @@ ServerHandler::ServerHandler()
 
 }
 
+void ServerHandler::makeMove(QPoint from, QPoint to)
+{
+    sendToServer("step:" + QString::number(from.x()) + ":" + QString::number(from.y()) +
+                 ":" + QString::number(to.x())  + ":" + QString::number(to.y()));
+}
+
 void ServerHandler::connectToServer()
 {
-    serverSocket->connectToHost("localhost", PORT_NUM);
+    serverSocket->connectToHost("192.168.0.103", PORT_NUM);
     emit messageCame("connecting");
 }
 
 void ServerHandler::logIn(QString userName, QString userPassword)
 {
+    this->userLogin = userName;
     sendToServer("login:" + userName +":" + userPassword);
 }
 
 void ServerHandler::createAccount(QString userName, QString userPassword)
 {
+    this->userLogin = userName;
     sendToServer("create:" + userName + ":" + userPassword);
 }
 
@@ -60,7 +69,6 @@ void ServerHandler::slotReadyRead()
         blockSize = 0;
         processMessage(message);
         emit messageCame(message);
-
     }
 }
 
@@ -81,6 +89,7 @@ void ServerHandler::slotError(QAbstractSocket::SocketError err)
 
 void ServerHandler::slotConnected()
 {
+    haveConnectionToServer = true;
     emit messageCame("connected");
     emit messageCame("showRegistrationWin");
 }
@@ -110,6 +119,26 @@ void ServerHandler::processMessage(const QString &message)
     {
         userAuthorized = true;
     }
+}
+
+void ServerHandler::acceptOpponent()
+{
+    sendToServer("ready:");
+}
+
+QString ServerHandler::getUserLogin()
+{
+    return userLogin;
+}
+
+bool ServerHandler::isUserAuthorized()
+{
+    return userAuthorized;
+}
+
+bool ServerHandler::isHaveConnectionToServer()
+{
+    return haveConnectionToServer;
 }
 
 ServerHandler::~ServerHandler()

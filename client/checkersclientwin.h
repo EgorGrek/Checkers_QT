@@ -23,9 +23,9 @@ public:
 
     void drawField();
     void drawCheckers();
-    void mausePressed(QPointF mouseCoordinates);
+    bool mausePressed(QPointF mouseCoordinates);
     void mauseReleased(QPointF mouseCoordinates);
-    void showLoser();
+
 
 private:
     QPoint getFieldPosition(QPointF mouseCoordinates);
@@ -34,6 +34,10 @@ private:
 private slots:
     void redraw();
     void showRules();
+    void showLoser();
+    void showMessage(const QString &message);
+    void showInfo(const QString &info);
+    void showUserLogin(const QString &login);
     void serverError(const QString &err);
     void cameServerMessage(const qint32&);
 
@@ -42,7 +46,9 @@ private:
     Ui::CheckersClientWin *ui;
     Controller *controller;
     ViewCheckers *pView;
-
+    QLabel *userInfo;
+    QLabel *userLogin;
+    QPushButton* pcmdLogIn_Out;
 
 
 };

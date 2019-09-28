@@ -14,9 +14,9 @@
 #define HIT 1
 #define STEP 2
 
-#define BLACKPLAYER 0
-#define WHITEPLAYER 1
-#define NOBODY 2
+#define BLACKPLAYER 1
+#define WHITEPLAYER 2
+#define NOBODY      3
 
 class Model: public QObject
 {
@@ -25,11 +25,12 @@ public:
     QVector<QVector<qint8>> getField();
     void startNewGame();
 
-    void makeMove(QPoint from, QPoint to);
+    bool makeMove(QPoint from, QPoint to);
     qint8 getWhoseMove();
 
     QString getLoser();
 
+    qint8 getCellColor(QPoint cellCoord);
     QVector<QPoint> getAvailableToMoveCells(QPoint from);
     QVector<QPoint> getAvailableToHitCells(QPoint from);
 private:

@@ -28,6 +28,9 @@ CheckersClientWin::CheckersClientWin(QSize winSize, QWidget *parent) :
 
     connect(controller, SIGNAL(fieldChanged()), this, SLOT(redraw()));
     connect(controller, SIGNAL(serverError(const QString&)), this, SLOT(serverError(const QString&)));
+    connect(controller, SIGNAL(cameMessage(const QString&)), this, SLOT(showMessage(const QString&)));
+    connect(controller, SIGNAL(haveInfo(const QString&)), this, SLOT(showInfo(const QString&)));
+    connect(controller, SIGNAL(userAuthorized(const QString&)), this, SLOT(showUserLogin(const QString&)));
     connect(controller, SIGNAL(cameServerMessage(const qint32&)), this, SLOT(cameServerMessage(const qint32&)));
 
     this->setWindowTitle("Checkers");
@@ -43,24 +46,28 @@ CheckersClientWin::CheckersClientWin(QSize winSize, QWidget *parent) :
     pView = new ViewCheckers(new QGraphicsScene());
 
     QHBoxLayout* phbxLayout = new QHBoxLayout;
+    QHBoxLayout* userInfoLayout = new QHBoxLayout;
     QVBoxLayout* pvbxLayout = new QVBoxLayout;
-    QPushButton* pcmdZoomIn = new QPushButton("Zoom In");
-    QPushButton* pcmdZoomOut = new QPushButton("Zoom Out");
+    pcmdLogIn_Out = new QPushButton("Log in");
 
-    phbxLayout->addWidget(new QPushButton("Log in"));
-    phbxLayout->addStretch(0);
+    phbxLayout->addWidget(pcmdLogIn_Out);
+    phbxLayout->addStretch();
+
+    userInfo = new QLabel("");
+    userLogin = new QLabel("");
+    userInfoLayout->addWidget(userInfo);
+    phbxLayout->addStretch();
+    userInfoLayout->addWidget(userLogin);
 
     pvbxLayout->addLayout(phbxLayout);
+    pvbxLayout->addLayout(userInfoLayout);
     pvbxLayout->addWidget(pView);
-    pvbxLayout->addWidget(pcmdZoomIn);
-    pvbxLayout->addWidget(pcmdZoomOut);
 
     pCentralWidget->setLayout(pvbxLayout);
 
     this->setCentralWidget(pCentralWidget);
 
-    connect(pcmdZoomIn, SIGNAL(clicked()), pView, SLOT(slotZoomIn()));
-    connect(pcmdZoomOut, SIGNAL(clicked()), pView, SLOT(slotZoomOut()));
+    connect(pcmdLogIn_Out, SIGNAL(clicked()), controller, SLOT(clickedLogIn_OutButton()));
 
     qint32 minSideWin = qMin(winSize.width(), winSize.height());      // square win
     this->setFocus();
@@ -136,7 +143,6 @@ void CheckersClientWin::drawCheckers()
     qreal stepY = *yp2 / BOARDSIZE;
     qint8 indexI = 0;
     qint8 indexJ = 0;
-    qint8 whoseMove = controller->getWhoseMove();
     for(const QVector<qint8> &i : field)
     {
         for(const qint8 &j : i)
@@ -152,10 +158,6 @@ void CheckersClientWin::drawCheckers()
                 pChecker->setPen(QPen(Qt::black, stepX / 20));
                 pChecker->setBrush(QBrush(Qt::white));
 
-                if(whoseMove == WHITEPLAYER)
-                {
-                    pChecker->setFlags(QGraphicsItem::ItemIsMovable);
-                }
             }
             else if(j == BLACKUNIT)
             {
@@ -167,10 +169,6 @@ void CheckersClientWin::drawCheckers()
                 pChecker->setPen(QPen(Qt::white, stepX / 20));
                 pChecker->setBrush(QBrush(Qt::black));
 
-                if(whoseMove == BLACKPLAYER)
-                {
-                    pChecker->setFlags(QGraphicsItem::ItemIsMovable);
-                }
             }
             else if(j == WHITEQUEEN)
             {
@@ -192,11 +190,6 @@ void CheckersClientWin::drawCheckers()
 
                 scene->addItem(group);
 
-                if(whoseMove == WHITEPLAYER)
-                {
-                    group->setFlags(QGraphicsItem::ItemIsMovable);
-                }
-
             }
             else if(j == BLACKQUEEN)
             {
@@ -217,11 +210,6 @@ void CheckersClientWin::drawCheckers()
                 group->addToGroup(queenLine);
 
                 scene->addItem(group);
-
-                if(whoseMove == BLACKPLAYER)
-                {
-                    group->setFlags(QGraphicsItem::ItemIsMovable);
-                }
             }
 
             indexJ += 1;
@@ -237,12 +225,11 @@ void CheckersClientWin::redraw()
     drawField();
     drawCheckers();
     showLoser();
-
 }
 
-void CheckersClientWin::mausePressed(QPointF mouseCoordinates)
+bool CheckersClientWin::mausePressed(QPointF mouseCoordinates)
 {
-    controller->mousePressed(getFieldPosition(mouseCoordinates));
+    return controller->mousePressed(getFieldPosition(mouseCoordinates));
 }
 
 void CheckersClientWin::mauseReleased(QPointF mouseCoordinates)
@@ -262,7 +249,9 @@ QPoint CheckersClientWin::getFieldPosition(QPointF mouseCoordinates)
 void CheckersClientWin::resizeEvent(QResizeEvent *event)
 {
     resize(event->size().width(), event->size().height());
-    redraw();
+    pView->scene()->clear();
+    drawField();
+    drawCheckers();
 }
 
 void CheckersClientWin::showLoser()
@@ -285,6 +274,22 @@ void CheckersClientWin::serverError(const QString &err)
     QMessageBox::information(this, "Error", err);
 }
 
+void CheckersClientWin::showMessage(const QString &message)
+{
+    QMessageBox::information(this, "Message", message);
+}
+
+void CheckersClientWin::showInfo(const QString &info)
+{
+    userInfo->setText(info);
+}
+
+void CheckersClientWin::showUserLogin(const QString &login)
+{
+    userLogin->setText(login);
+    pcmdLogIn_Out->setText("Log out");
+}
+
 void CheckersClientWin::cameServerMessage(const qint32& message)
 {
     if(message == SHOW_REGISTRATION_WIN)
@@ -304,6 +309,5 @@ void CheckersClientWin::cameServerMessage(const qint32& message)
     {
         QMessageBox::information(this, "Message", "We found opponent for you, you are playing black.");
     }
-
 }
 

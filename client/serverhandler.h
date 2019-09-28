@@ -17,6 +17,9 @@ public:
     ~ServerHandler();
     void connectToServer();
     bool isUserAuthorized();
+    QString getUserLogin();
+    void acceptOpponent();
+    bool isHaveConnectionToServer();
     void searchForAnOpponent();
     void makeMove(QPoint from, QPoint to);
     void giveUp();
@@ -40,7 +43,8 @@ private slots:
 
 private:
     bool userAuthorized;
-
+    bool haveConnectionToServer;
+    QString userLogin;
     QTcpSocket* serverSocket;
 };
 

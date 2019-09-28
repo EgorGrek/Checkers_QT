@@ -13,7 +13,14 @@ void    CheckerQueen::mousePressEvent ( QGraphicsSceneMouseEvent * event )
 {
     //this->setOpacity(10);
     this->setZValue(1);
-    this->pCheckersClientWin->mausePressed(event->scenePos());
+    if(this->pCheckersClientWin->mausePressed(event->scenePos()))
+    {
+        this->setFlags(QGraphicsItem::ItemIsMovable);
+    }
+    else
+    {
+        this->setFlags(this->flags() & ~QGraphicsItem::ItemIsMovable);
+    }
 }
 
 void    CheckerQueen::mouseReleaseEvent ( QGraphicsSceneMouseEvent * event )

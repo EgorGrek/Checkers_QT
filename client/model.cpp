@@ -72,13 +72,13 @@ bool Model::transformToQueen(QPoint unit)
     }
 }
 
-void Model::makeMove(QPoint from, QPoint to)
+bool Model::makeMove(QPoint from, QPoint to)
 {
     qint8 moveType = getMoveType(from, to);
 
     if(moveType == WRONGMOVE)
     {
-        return;
+        return false;
     }
     else
     {
@@ -113,6 +113,7 @@ void Model::makeMove(QPoint from, QPoint to)
             whoseMove = NOBODY;
         }
     }
+    return true;
 }
 
 void Model::createStartField()
@@ -884,6 +885,24 @@ bool Model::isGameOver()
 QString Model::getLoser()
 {
     return loser;
+}
+
+qint8 Model::getCellColor(QPoint cellCoord)
+{
+    if(field[cellCoord.y()][cellCoord.x()] == WHITEUNIT ||
+            field[cellCoord.y()][cellCoord.x()] == WHITEQUEEN)
+    {
+        return WHITEPLAYER;
+    }
+    else if(field[cellCoord.y()][cellCoord.x()] == BLACKUNIT ||
+            field[cellCoord.y()][cellCoord.x()] == BLACKQUEEN)
+    {
+        return BLACKPLAYER;
+    }
+    else
+    {
+        return EMPTYCELL;
+    }
 }
 
 void Model::startNewGame()
