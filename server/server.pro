@@ -26,24 +26,28 @@ DEFINES += QT_DEPRECATED_WARNINGS
 CONFIG += c++11
 
 SOURCES += \
-        battlehandle.cpp \
+        battlehandler.cpp \
         checkersserver.cpp \
         clienthandler.cpp \
         clientlinker.cpp \
+        controller.cpp \
         dbconnectionprovider.cpp \
         main.cpp \
         checkersserverwin.cpp \
-        model.cpp
+        model.cpp \
+        user.cpp
 
 HEADERS += \
-        battlehandle.h \
+        battlehandler.h \
         checkersserver.h \
         checkersserverwin.h \
         clienthandler.h \
         clientlinker.h \
+        controller.h \
         dbconnectionprovider.h \
         model.h \
-        parser.h
+        parser.h \
+        user.h
 
 FORMS += \
         checkersserverwin.ui

@@ -1,19 +1,21 @@
 #ifndef CLIENTLINKER_H
 #define CLIENTLINKER_H
 
-#include "battlehandle.h"
+#include "battlehandler.h"
+#include "user.h"
 
 #include <QObject>
 #include <QTcpSocket>
 #include <QtSql>
 #include <QWidget>
 
+
 class ClientLinker : public QObject
 {
     Q_OBJECT
 
 public:
-    void startWaitingAnOpponent(QTcpSocket* clientSocket);
+    void startWaitingAnOpponent(User *user);
 
     static ClientLinker* getClientLinkerInstance()
     {
@@ -21,8 +23,11 @@ public:
         return &instance;
     }
 private:
+    bool connectClientsToBattleHandler(User *user1, User *user2, BattleHandler *battleHandler);
+
+private:
     QMutex mutex;
-    QVector<QTcpSocket*> searchingOpponentClients;
+    QVector<User*> searchingOpponentClients;
 
 private:
     ClientLinker();

@@ -72,8 +72,13 @@ bool Model::transformToQueen(QPoint unit)
     }
 }
 
-bool Model::makeMove(QPoint from, QPoint to)
+bool Model::makeMove(QPoint from, QPoint to, qint8 whoseMove)
 {
+    if(this->whoseMove != whoseMove)
+    {
+        return false;
+    }
+
     qint8 moveType = getMoveType(from, to);
 
     if(moveType == WRONGMOVE)

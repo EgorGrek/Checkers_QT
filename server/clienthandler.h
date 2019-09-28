@@ -2,8 +2,8 @@
 #define CLIENTHANDLER_H
 
 #include "dbconnectionprovider.h"
-#include "parser.h"
 #include "model.h"
+#include "controller.h"
 
 #include <QWidget>
 #include <QThread>
@@ -12,27 +12,27 @@
 
 class ClientHandler: public QThread
 {
-Q_OBJECT
+    Q_OBJECT
+
 public:
     explicit ClientHandler(qintptr ID, QObject *parent = nullptr);
     void run();
 
 private:
     void processMessage(const QString &message);
-    void sendToClient(const QString &data);
+
 signals:
     void error(QTcpSocket::SocketError socketerror);
 
 public slots:
     void readyRead();
     void disconnected();
+    void sendToClient(const QString &data);
 
 private:
-    QTcpSocket *socket;
     qintptr socketDescriptor;
-    QString username;
-
-    DBConnectionProvider *dbConnectionProvider;
+    QTcpSocket *socket;
+    Controller *controller;
 
 };
 
