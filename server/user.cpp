@@ -15,6 +15,11 @@ void User::accceptOpponent(const QString &message)
     emit sendToOpponent(message);
 }
 
+void User::giveUp(const QString &message)
+{
+    emit sendToOpponent(message);
+}
+
 void User::login(const QString &message)
 {
     QPair<QString, QString> login_password = Parser::parsLogin(message);
@@ -44,8 +49,6 @@ void User::createAcc(const QString &message)
         else
         {
             dbConnectionProvider->insertUser(login_password.first, login_password.second);
-            qDebug() << login_password;
-            username = login_password.first; // TODO - DELETE THIS
             emit sendToClient("okcreate");
         }
     }
@@ -64,3 +67,8 @@ void User::makeMove(const QString &message)
 {
     emit sendToOpponent(message);
 }
+
+    bool User::isUserLoggedIn()
+    {
+        return userLoggedIn;
+    }

@@ -14,7 +14,7 @@ bool DBConnectionProvider::createConnection()
     db.setDatabaseName("ejuiqnsm");
     db.setUserName ("ejuiqnsm");
     db.setHostName("balarama.db.elephantsql.com");
-    db.setPassword ( "aCKzVJWzim_CkSpHwmAJaSKb6hr6Rr3g") ;
+    db.setPassword ( "LPxPug_JzXsk_fINkbQCROyGX5Maq3os");
     if (!db.open())
     {
         qDebug() << "Cannot open database:" << db.lastError();

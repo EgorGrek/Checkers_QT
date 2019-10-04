@@ -15,7 +15,7 @@ void BattleHandler::run()
     emit messageForUserWhite("areyouready:" + userBlack->getUsername());
     emit messageForUserBlack("areyouready:" + userWhite->getUsername());
     //    this->dbConnectionProvider = DBConnectionProvider::getDBConnectionProviderInstance();
-    QThread::msleep(10000); // wait 1/6 minute until the opponents agree
+    sleeper.sleep(60000); // wait 1 minute until the opponents agree
 
     if(userWhiteReady && userBlackReady)
     {
@@ -52,20 +52,41 @@ void BattleHandler::disconnectedUserBlack()
 
 }
 
+void BattleHandler::sendToOppositeUser(const QString &message, const qint8 &playerColor)
+{
+    if(playerColor == WHITEPLAYER)
+    {
+        emit messageForUserBlack(message);
+    }
+    else if (playerColor == BLACKPLAYER)
+    {
+        emit messageForUserWhite(message);
+    }
+}
+
+
 void BattleHandler::processMessage(const QString &message, const qint8 &playerColor)
 {
     qint32 messageType = Parser::getMessageType(message);
     qDebug() << "BattleHandler" << message;
     if(messageType == CLIENT_STEP)
     {
-        // TODO check is move correct
-        if(playerColor == WHITEPLAYER)
+        QPair<QPoint, QPoint> step =  Parser::parsStep(message);
+        if(model.makeMove(step.first, step.second, playerColor))
         {
-            emit messageForUserBlack(message);
+            sendToOppositeUser(message, playerColor);
+            sendToOppositeUser("okstep", playerColor);
         }
-        else if (playerColor == BLACKPLAYER)
+        else
         {
-            emit messageForUserWhite(message);
+            if(playerColor == WHITEPLAYER)
+            {
+                emit messageForUserWhite("notstep");
+            }
+            else if (playerColor == BLACKPLAYER)
+            {
+                emit messageForUserBlack("notstep");
+            }
         }
     }
     else if(messageType == CLIENT_READY)
@@ -80,8 +101,14 @@ void BattleHandler::processMessage(const QString &message, const qint8 &playerCo
             userBlackReady = true;
             qDebug() << "userBlackReady = true;";
         }
+
+        if(userBlackReady && userWhiteReady)
+        {
+            sleeper.wake();
+        }
     }
     else
     {
+        sendToOppositeUser(message, playerColor);
     }
 }

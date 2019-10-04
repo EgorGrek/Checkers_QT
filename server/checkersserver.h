@@ -7,20 +7,21 @@
 
 #include <QTcpServer>
 
-#define PORT_NUM 1237
-
 class CheckersServer: public QTcpServer
 {
     Q_OBJECT
-    public:
-        explicit CheckersServer(QObject *parent = nullptr);
-        void startServer();
-    signals:
+public:
+    explicit CheckersServer(QObject *parent = nullptr);
+    void startServer();
+signals:
 
-    public slots:
+public slots:
 
-    protected:
-        void incomingConnection(qintptr socketDescriptor);
+protected:
+    void incomingConnection(qintptr socketDescriptor);
+
+private:
+    const quint16 port = 1237;
 };
 
 #endif // CHECKERSSERVER_H

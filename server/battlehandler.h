@@ -4,6 +4,7 @@
 #include "user.h"
 #include "model.h"
 #include "dbconnectionprovider.h"
+#include "wakeablesleep.h"
 #include "parser.h"
 
 #include <QThread>
@@ -18,6 +19,7 @@ public:
 
 private:
     void processMessage(const QString &message, const qint8 &playerColor);
+    void sendToOppositeUser(const QString &message, const qint8 &playerColor);
 
 signals:
     void messageForUserWhite(const QString &message);
@@ -36,6 +38,8 @@ private:
     bool userWhiteReady;
     bool userBlackReady;
     Model model;
+
+    WakeableSleep sleeper;
     DBConnectionProvider *dbConnectionProvider;
 };
 

@@ -6,12 +6,17 @@
 #define LOGIN_LENGTH_MIN           6
 #define LOGIN_LENGTH_MAX           30
 
+#define PASSWORD_LENGTH_MIN        6
+#define PASSWORD_LENGTH_MAX        30
+
 #define CLIENT_STEP                0
 #define CLIENT_LOGIN               1
 #define CLIENT_CREATE              2
 #define CLIENT_READY               3
 #define CLIENT_SEARCHING_OPPONENT  4
+#define CLIENT_GIVE_UP             5
 #define UNKNOWN_MESSAGE_TYPE      -1
+
 class Parser
 {
 
@@ -41,6 +46,10 @@ public:
         {
             return CLIENT_SEARCHING_OPPONENT;
         }
+        else if(str.startsWith("giveup"))
+        {
+            return CLIENT_GIVE_UP;
+        }
 
         return UNKNOWN_MESSAGE_TYPE;
     }
@@ -57,9 +66,11 @@ public:
     static QPair<QString, QString> parsLogin(const QString &str)
     {
         QRegExp rx(
-                    QString("login:((\\w|\\d){%1,%2}):(\\w+|\\d+)")
+                    QString("login:((\\w|\\d){%1,%2}):((\\w|\\d){%1,%2})")
                     .arg(LOGIN_LENGTH_MIN)
                     .arg(LOGIN_LENGTH_MAX)
+                    .arg(PASSWORD_LENGTH_MIN)
+                    .arg(PASSWORD_LENGTH_MAX)
                     );
         if( rx.indexIn(str) == -1 )
             return QPair<QString, QString>(QString(), QString());
@@ -70,9 +81,11 @@ public:
     static QPair<QString, QString> parsCreateAcc(const QString &str)
     {
         QRegExp rx(
-                    QString("create:((\\w|\\d){%1,%2}):(\\w+|\\d+)")
+                    QString("create:((\\w|\\d){%1,%2}):((\\w|\\d){%1,%2})")
                     .arg(LOGIN_LENGTH_MIN)
                     .arg(LOGIN_LENGTH_MAX)
+                    .arg(PASSWORD_LENGTH_MIN)
+                    .arg(PASSWORD_LENGTH_MAX)
                     );
         if( rx.indexIn(str) == -1 )
             return QPair<QString, QString>(QString(), QString());

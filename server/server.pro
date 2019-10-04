@@ -35,7 +35,8 @@ SOURCES += \
         main.cpp \
         checkersserverwin.cpp \
         model.cpp \
-        user.cpp
+        user.cpp \
+        wakeablesleep.cpp
 
 HEADERS += \
         battlehandler.h \
@@ -47,7 +48,8 @@ HEADERS += \
         dbconnectionprovider.h \
         model.h \
         parser.h \
-        user.h
+        user.h \
+        wakeablesleep.h
 
 FORMS += \
         checkersserverwin.ui

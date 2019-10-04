@@ -8,20 +8,17 @@ CheckersServer::CheckersServer(QObject *parent) :
 
 void CheckersServer::startServer()
 {
-    quint16 port = PORT_NUM;
-
-    if(!this->listen(QHostAddress::Any,port))
+    if(this->listen(QHostAddress::Any, port))
     {
-        qDebug() << "Could not start server";
+        qDebug() << "Listening to port " << port << "...";
+        DBConnectionProvider *dbConnectionProvider = DBConnectionProvider::getDBConnectionProviderInstance();
+        dbConnectionProvider->createConnection();
+        dbConnectionProvider->createDB();
     }
     else
     {
-        qDebug() << "Listening to port " << port << "...";
+        qDebug() << "Could not start server";
     }
-
-    DBConnectionProvider *dbConnectionProvider = DBConnectionProvider::getDBConnectionProviderInstance();
-    dbConnectionProvider->createConnection();
-    dbConnectionProvider->createDB();
 }
 
 void CheckersServer::incomingConnection(qintptr socketDescriptor)

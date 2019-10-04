@@ -31,6 +31,10 @@ void Controller::processMessage(const QString &message)
     {
         user->accceptOpponent(message);
     }
+    else if(messageType == CLIENT_GIVE_UP)
+    {
+        user->giveUp(message);
+    }
     else if(messageType == UNKNOWN_MESSAGE_TYPE)
     {
 

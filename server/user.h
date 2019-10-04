@@ -16,8 +16,9 @@ public:
     void createAcc(const QString &message);
     void login(const QString &message);
     void makeMove(const QString &message);
+    void giveUp(const QString &message);
     void accceptOpponent(const QString &message);
-    bool isUserLogin();
+    bool isUserLoggedIn();
 
 public slots:
     void cameMessageFromOpponent(const QString &message);
@@ -28,6 +29,7 @@ signals:
     void disconnected();
 
 private:
+    bool userLoggedIn;
     QString username;
     DBConnectionProvider *dbConnectionProvider;
 };
