@@ -1,5 +1,5 @@
 #include "controller.h"
-#include "parser.h"
+#include "servermessageparser.h"
 #include <QtWidgets>
 
 Controller::Controller(QWidget *parent) : QObject (parent)
@@ -30,7 +30,7 @@ void Controller::startPlayAgainstOpponentOnServer()
 
 void Controller::actionSearch_for_an_opponent()
 {
-    if(serverhandler->isUserAuthorized())
+    if(serverhandler->isUserLoggedIn())
     {
         serverhandler->searchForAnOpponent();
         emit haveInfo("Searching for an opponent...");
@@ -45,9 +45,9 @@ void Controller::clickedLogIn_OutButton()
 {
     if(serverhandler->isHaveConnectionToServer())
     {
-        if(serverhandler->isUserAuthorized())
+        if(serverhandler->isUserLoggedIn())
         {
-            //TODO make log out
+            serverhandler->logOut();
         }
         else
         {
@@ -58,6 +58,12 @@ void Controller::clickedLogIn_OutButton()
     {
         serverhandler->connectToServer();
     }
+}
+
+void Controller::clickedGiveUpButton()
+{
+    serverhandler->giveUp();
+    this->gameType = gameNotStart;
 }
 
 void Controller::actionPlay_against_bot()
@@ -80,17 +86,29 @@ qint8 Controller::getWhoseMove()
     return model->getWhoseMove();
 }
 
+void Controller::acceptOpponent()
+{
+    serverhandler->acceptOpponent();
+}
+
+void Controller::denialOpponent()
+{
+    //TODO make denial opponent
+}
+
 bool Controller::mousePressed(QPoint from)
 {
     mousePressCoordinates = from;
-    if(userColor == model->getCellColor(from))
+    if(this->gameType != gameNotStart)
     {
-        return true;
+        qint8 cellColor = model->getCellColor(from);
+        if(userColor == cellColor &&
+                cellColor == model->getWhoseMove())
+        {
+            return true;
+        }
     }
-    else
-    {
-        return false;
-    }
+    return false;
 }
 
 void Controller::mouseReleased(QPoint to)
@@ -120,11 +138,11 @@ void Controller::signalWhoseMove()
     if(model->getWhoseMove() != NOBODY)
     {
         QString whoseMove = model->getWhoseMove() == WHITEPLAYER ? "White" : "Black";
-        emit haveInfo("Move:" + whoseMove);
+        emit changedWhoseMove(whoseMove);
     }
     else
     {
-        emit haveInfo("");
+        emit changedWhoseMove("-");
     }
 }
 
@@ -136,7 +154,6 @@ void Controller::connectToServer()
 Controller::~Controller()
 {
     delete model;
-
     delete serverhandler;
 }
 
@@ -152,15 +169,14 @@ void Controller::createAccount(QString userName, QString userPassword)
 
 void Controller::processingMessage(const QString& message)
 {
-    qint32 messageType = Parser::getMessageType(message);
-    qDebug() << message;
+    qint32 messageType = ServerMessageParser::getMessageType(message);
     if(messageType == UNKNOWN_MESSAGE_TYPE)
     {
         emit serverError("Error: We don't understand request from server :(,\n maybe you should update application");
     }
     else if(messageType == ENEMY_STEP)
     {
-        QPair<QPoint, QPoint> from_to_move = Parser::parsStep(message);
+        QPair<QPoint, QPoint> from_to_move = ServerMessageParser::parsStep(message);
         model->makeMove(from_to_move.first, from_to_move.second);
         signalWhoseMove();
         emit fieldChanged();
@@ -173,21 +189,32 @@ void Controller::processingMessage(const QString& message)
     else if(messageType == CONNECTED)
     {
         emit haveInfo("Connection to the server was successful");
+        emit cameServerMessage(SHOW_REGISTRATION_WIN);
+    }
+    else if(messageType == CONNECTING)
+    {
+        emit haveInfo("Connecting...");
     }
     else if(messageType == OPPONENT_FOUND)
     {
-        emit cameMessage("Opponent found - " + Parser::parseOpponent(message));
-        serverhandler->acceptOpponent();
+        emit haveInfo("");
+        emit opponentFound(ServerMessageParser::parseOpponent(message));
+    }
+    else if(messageType == OPPONENT_GIVE_UP)
+    {
+        emit cameMessage("Your opponent give up !");
+        emit haveInfo("");
+        this->gameType = gameNotStart;
     }
     else if(messageType == START_WHITE)
     {
-        emit cameMessage("You plaing - WHITE");
+        emit cameMessage("The game STARTED !!!\n You are playing WHITE.");
         userColor = WHITEPLAYER;
         startPlayAgainstOpponentOnServer();
     }
     else if(messageType == START_BLACK)
     {
-        emit cameMessage("You plaing - BLACK");
+        emit cameMessage("The game STARTED !!!\n You are playing BLACK.");
         userColor = BLACKPLAYER;
         startPlayAgainstOpponentOnServer();
     }

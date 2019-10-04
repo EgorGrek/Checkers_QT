@@ -2,7 +2,7 @@
 #define REGISTRATIONWIN_H
 
 #include "controller.h"
-#include "parser.h"
+#include "servermessageparser.h"
 
 #include <QDialog>
 #include <QtWidgets>

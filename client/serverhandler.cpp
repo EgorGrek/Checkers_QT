@@ -3,7 +3,7 @@
 
 ServerHandler::ServerHandler()
 {
-    userAuthorized = false;
+    userLoggedIn = false;
     haveConnectionToServer = false;
     serverSocket = new QTcpSocket(this);
     connect(serverSocket, SIGNAL(connected()), SLOT(slotConnected()));
@@ -21,19 +21,31 @@ void ServerHandler::makeMove(QPoint from, QPoint to)
 
 void ServerHandler::connectToServer()
 {
-    serverSocket->connectToHost("192.168.0.103", PORT_NUM);
+    serverSocket->connectToHost("localhost", port);
     emit messageCame("connecting");
+}
+
+void ServerHandler::giveUp()
+{
+    sendToServer("giveup");
+}
+
+void ServerHandler::logOut()
+{
+    sendToServer("logout");
 }
 
 void ServerHandler::logIn(QString userName, QString userPassword)
 {
     this->userLogin = userName;
+    this->userPassword = userPassword;
     sendToServer("login:" + userName +":" + userPassword);
 }
 
 void ServerHandler::createAccount(QString userName, QString userPassword)
 {
     this->userLogin = userName;
+    this->userPassword = userPassword;
     sendToServer("create:" + userName + ":" + userPassword);
 }
 
@@ -68,13 +80,12 @@ void ServerHandler::slotReadyRead()
         in  >> message;
         blockSize = 0;
         processMessage(message);
-        emit messageCame(message);
     }
 }
 
 void ServerHandler::slotError(QAbstractSocket::SocketError err)
 {
-    userAuthorized = false;
+    userLoggedIn = false;
     QString strError =
             "Error: "+ (err == QAbstractSocket::HostNotFoundError ?
                             "The host was not found." :
@@ -91,7 +102,6 @@ void ServerHandler::slotConnected()
 {
     haveConnectionToServer = true;
     emit messageCame("connected");
-    emit messageCame("showRegistrationWin");
 }
 
 void ServerHandler::searchForAnOpponent()
@@ -101,7 +111,7 @@ void ServerHandler::searchForAnOpponent()
         connectToServer();
         return;
     }
-    else if(userAuthorized)
+    else if(userLoggedIn)
     {
         sendToServer("searchopp");
     }
@@ -113,12 +123,17 @@ void ServerHandler::searchForAnOpponent()
 
 void ServerHandler::processMessage(const QString &message)
 {
-    qDebug() << message;
-    qint32 messageType = Parser::getMessageType(message);
-    if(messageType == OK_LOGIN || OK_CREATE)
+    qDebug() << "ServerHandler::processMessage - " << message;
+    qint32 messageType = ServerMessageParser::getMessageType(message);
+    if(messageType == OK_LOGIN)
     {
-        userAuthorized = true;
+        userLoggedIn = true;
     }
+    else if(messageType == OK_CREATE)
+    {
+        logIn(userLogin, userPassword);
+    }
+    emit messageCame(message);
 }
 
 void ServerHandler::acceptOpponent()
@@ -131,9 +146,9 @@ QString ServerHandler::getUserLogin()
     return userLogin;
 }
 
-bool ServerHandler::isUserAuthorized()
+bool ServerHandler::isUserLoggedIn()
 {
-    return userAuthorized;
+    return userLoggedIn;
 }
 
 bool ServerHandler::isHaveConnectionToServer()

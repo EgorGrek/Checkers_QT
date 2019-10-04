@@ -19,6 +19,9 @@ public:
     bool mousePressed(QPoint from);
     void mouseReleased(QPoint to);
 
+    void acceptOpponent();
+    void denialOpponent();
+    
     void signalWhoseMove();
     void startPlayAgainstOpponentOnServer();
     qint8 getWhoseMove();
@@ -37,6 +40,7 @@ private slots:
     void actionPlay_on_one_computer();
     void processingMessage(const QString&);
     void clickedLogIn_OutButton();
+    void clickedGiveUpButton();
 
 signals:
     void fieldChanged();
@@ -44,8 +48,10 @@ signals:
     void cameServerMessage(const qint32&);
     void cameMessage(const QString&);
     void haveInfo(const QString&);
+    void changedWhoseMove(const QString&);
     void serverError(const QString&);
     void userAuthorized(const QString&);
+    void opponentFound(const QString&);
 
 private:
     Model *model;

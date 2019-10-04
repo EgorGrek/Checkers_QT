@@ -18,11 +18,12 @@
 #define CONNECTED               11
 #define NOT_START               12
 #define OPPONENT_FOUND          13
+#define OPPONENT_GIVE_UP        14
 
-class Parser
+class ServerMessageParser
 {
 private:
-    Parser();
+    ServerMessageParser();
 public:
 
     static qint32 getMessageType(const QString &str)
@@ -83,6 +84,10 @@ public:
         else if(str.startsWith("areyouready"))
         {
             return OPPONENT_FOUND;
+        }
+        else if(str.startsWith("giveup"))
+        {
+            return OPPONENT_GIVE_UP;
         }
         return UNKNOWN_MESSAGE_TYPE;
     }

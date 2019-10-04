@@ -4,6 +4,7 @@
 #include "checker.h"
 #include "checkerqueen.h"
 #include "registrationwin.h"
+#include "opponentacceptancewin.h"
 
 #include <QPainter>
 #include <QApplication>
@@ -30,7 +31,9 @@ CheckersClientWin::CheckersClientWin(QSize winSize, QWidget *parent) :
     connect(controller, SIGNAL(serverError(const QString&)), this, SLOT(serverError(const QString&)));
     connect(controller, SIGNAL(cameMessage(const QString&)), this, SLOT(showMessage(const QString&)));
     connect(controller, SIGNAL(haveInfo(const QString&)), this, SLOT(showInfo(const QString&)));
+    connect(controller, SIGNAL(changedWhoseMove(const QString&)), this, SLOT(showWhoseMove(const QString&)));
     connect(controller, SIGNAL(userAuthorized(const QString&)), this, SLOT(showUserLogin(const QString&)));
+    connect(controller, SIGNAL(opponentFound(const QString&)), this, SLOT(showOpponentAcceptanceWin(const QString&)));
     connect(controller, SIGNAL(cameServerMessage(const qint32&)), this, SLOT(cameServerMessage(const qint32&)));
 
     this->setWindowTitle("Checkers");
@@ -45,21 +48,25 @@ CheckersClientWin::CheckersClientWin(QSize winSize, QWidget *parent) :
 
     pView = new ViewCheckers(new QGraphicsScene());
 
-    QHBoxLayout* phbxLayout = new QHBoxLayout;
+    QHBoxLayout* loginLayout = new QHBoxLayout;
     QHBoxLayout* userInfoLayout = new QHBoxLayout;
     QVBoxLayout* pvbxLayout = new QVBoxLayout;
     pcmdLogIn_Out = new QPushButton("Log in");
-
-    phbxLayout->addWidget(pcmdLogIn_Out);
-    phbxLayout->addStretch();
-
+    pcmdGiveUp = new QPushButton("Give up");
     userInfo = new QLabel("");
     userLogin = new QLabel("");
-    userInfoLayout->addWidget(userInfo);
-    phbxLayout->addStretch();
-    userInfoLayout->addWidget(userLogin);
+    whoseMove = new QLabel("");
+    loginLayout->addWidget(pcmdLogIn_Out);
+    loginLayout->addWidget(userLogin);
+    loginLayout->addStretch();
+    loginLayout->addWidget(whoseMove);
 
-    pvbxLayout->addLayout(phbxLayout);
+    userInfoLayout->addWidget(userInfo);
+    userInfoLayout->addStretch();
+    userInfoLayout->addWidget(pcmdGiveUp);
+    pcmdGiveUp->hide();
+
+    pvbxLayout->addLayout(loginLayout);
     pvbxLayout->addLayout(userInfoLayout);
     pvbxLayout->addWidget(pView);
 
@@ -68,13 +75,14 @@ CheckersClientWin::CheckersClientWin(QSize winSize, QWidget *parent) :
     this->setCentralWidget(pCentralWidget);
 
     connect(pcmdLogIn_Out, SIGNAL(clicked()), controller, SLOT(clickedLogIn_OutButton()));
+    connect(pcmdGiveUp, SIGNAL(clicked()), controller, SLOT(clickedGiveUpButton()));
 
     qint32 minSideWin = qMin(winSize.width(), winSize.height());      // square win
     this->setFocus();
-    this->show();
-    this->resize(minSideWin / 2, minSideWin / 2);  // because the show method resizes widgets
-                                                    // and if do it before show()
-                                                    // the field twitches when resizing the window
+    this->show();                                  // because the show method resizes widgets
+    this->resize(minSideWin / 2, minSideWin / 2);  // and if do it before show()
+                                                   // the field twitches when resizing the window
+                                                   // for the first time
 }
 
 CheckersClientWin::~CheckersClientWin()
@@ -177,7 +185,7 @@ void CheckersClientWin::drawCheckers()
 
                 queenLine->setLine(indexJ * stepX + 3, indexI * stepY + 3,
                                 (indexJ + 1) * stepX - 3, (indexI + 1) * stepY - 3);
-                queenLine->setPen(QPen(Qt::black, 4));
+                queenLine->setPen(QPen(Qt::black, stepX / 10));
 
                 pChecker->setRect(QRectF(QPointF(indexJ * stepX + 3, indexI * stepY + 3),
                                          QPointF((indexJ + 1) * stepX - 3, (indexI + 1) * stepY - 3)));
@@ -198,7 +206,7 @@ void CheckersClientWin::drawCheckers()
 
                 queenLine->setLine(indexJ * stepX + 3, indexI * stepY + 3,
                                    (indexJ + 1) * stepX - 3, (indexI + 1) * stepY - 3);
-                queenLine->setPen(QPen(Qt::white, stepX / 20));
+                queenLine->setPen(QPen(Qt::white, stepX / 10));
 
                 pChecker->setRect(QRectF(QPointF(indexJ * stepX + 3, indexI * stepY + 3),
                                          QPointF((indexJ + 1) * stepX - 3, (indexI + 1) * stepY - 3)));
@@ -260,18 +268,26 @@ void CheckersClientWin::showLoser()
     if(loser != "")
     {
         QMessageBox::information(this, "Message", loser + " LOSE!!!");
+        pcmdGiveUp->hide();
     }
 }
 
 void CheckersClientWin::showRules()
 {
     QMessageBox::information(this, "Rules", "Just use google search.");
+}
 
+void CheckersClientWin::showOpponentAcceptanceWin(const QString &opponentName)
+{
+    OpponentAcceptanceWin *opponentAcceptanceWin = new OpponentAcceptanceWin(controller, opponentName);
+    opponentAcceptanceWin->setModal(true);
+    opponentAcceptanceWin->show();
 }
 
 void CheckersClientWin::serverError(const QString &err)
 {
-    QMessageBox::information(this, "Error", err);
+    userInfo->clear();
+    QMessageBox::information(this, "Server error", err);
 }
 
 void CheckersClientWin::showMessage(const QString &message)
@@ -282,6 +298,11 @@ void CheckersClientWin::showMessage(const QString &message)
 void CheckersClientWin::showInfo(const QString &info)
 {
     userInfo->setText(info);
+}
+
+void CheckersClientWin::showWhoseMove(const QString &whoseMove)
+{
+     this->whoseMove->setText("Move:" + whoseMove);
 }
 
 void CheckersClientWin::showUserLogin(const QString &login)
@@ -303,11 +324,11 @@ void CheckersClientWin::cameServerMessage(const qint32& message)
     }
     else if(message == START_WHITE)
     {
-        QMessageBox::information(this, "Message", "We found opponent for you, you are playing white.");
+        pcmdGiveUp->show();
     }
     else if(message == START_BLACK)
     {
-        QMessageBox::information(this, "Message", "We found opponent for you, you are playing black.");
+        pcmdGiveUp->show();
     }
 }
 

@@ -4,7 +4,7 @@
 #include "model.h"
 #include "controller.h"
 #include "viewcheckers.h"
-#include "parser.h"
+#include "servermessageparser.h"
 
 #include <QMainWindow>
 #include <QtWidgets>
@@ -38,6 +38,8 @@ private slots:
     void showMessage(const QString &message);
     void showInfo(const QString &info);
     void showUserLogin(const QString &login);
+    void showWhoseMove(const QString &whoseMove);
+    void showOpponentAcceptanceWin(const QString &opponentName);
     void serverError(const QString &err);
     void cameServerMessage(const qint32&);
 
@@ -48,7 +50,9 @@ private:
     ViewCheckers *pView;
     QLabel *userInfo;
     QLabel *userLogin;
+    QLabel *whoseMove;
     QPushButton* pcmdLogIn_Out;
+    QPushButton* pcmdGiveUp;
 
 
 };

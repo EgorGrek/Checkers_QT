@@ -12,6 +12,7 @@ RegistrationWin::RegistrationWin(Controller *controller, QDialog *parent) : QDia
 
     ptxtLogin = new QLineEdit;
     ptxtPassword = new QLineEdit;
+    ptxtPassword->setEchoMode(QLineEdit::Password);
 
     QPushButton* pcmdLogin = new QPushButton("Login");
     QPushButton* pcmdCreateAccount = new QPushButton ("Create account");

@@ -1,13 +1,12 @@
 #ifndef SERVERHANDLER_H
 #define SERVERHANDLER_H
 
-#include "parser.h"
+#include "servermessageparser.h"
 
 #include <QObject>
 #include <QWidget>
 #include <QTcpSocket>
 
-#define PORT_NUM 1237
 
 class ServerHandler : public QObject
 {
@@ -16,13 +15,14 @@ public:
     ServerHandler();
     ~ServerHandler();
     void connectToServer();
-    bool isUserAuthorized();
+    bool isUserLoggedIn();
     QString getUserLogin();
     void acceptOpponent();
     bool isHaveConnectionToServer();
     void searchForAnOpponent();
     void makeMove(QPoint from, QPoint to);
     void giveUp();
+    void logOut();
     void logIn(QString userName, QString userPassword);
     void createAccount(QString userName, QString userPassword);
 
@@ -35,17 +35,18 @@ signals:
     void messageCame(const QString&);
 
 private slots:
-
     void slotReadyRead();
     void slotError(QAbstractSocket::SocketError);
     void slotConnected();
 
 
 private:
-    bool userAuthorized;
+    bool userLoggedIn;
     bool haveConnectionToServer;
     QString userLogin;
+    QString userPassword;
     QTcpSocket* serverSocket;
+    const quint16 port = 1237;
 };
 
 #endif // SERVERHANDLER_H
